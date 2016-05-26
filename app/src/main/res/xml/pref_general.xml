@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <EditTextPreference
+        android:capitalize="none"
+        android:defaultValue="@string/pref_default_display_api_key"
+        android:inputType="textNoSuggestions"
+        android:key="api_key_text"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_display_api_key" />
+    <Preference
+        android:title="Get API key from cacoo.com (opens browser)"
+        android:key="info">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://cacoo.com/profile/api"
+            />
+
+    </Preference>
+</PreferenceScreen>
