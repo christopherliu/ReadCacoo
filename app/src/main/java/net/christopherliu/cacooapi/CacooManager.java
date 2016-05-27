@@ -33,38 +33,28 @@ public class CacooManager {
         this.apiKey = apiKey;
     }
 
-    private JSONObject getAccountInfo() throws InvalidKeyException, JSONException, MalformedURLException {
-        return getJsonObjectFromURL("account.json");
+    public AccountInfo retrieveAccountInfo() throws JSONException, InvalidKeyException, IOException {
+        JSONObject accountInfo = retrieveJSONFromCacoo("account.json");
+        JSONObject licenseInfo = retrieveJSONFromCacoo("account/license.json");
+
+        return new AccountInfo(downloadAsImage(new URL(accountInfo.getString("imageUrl"))),
+                accountInfo.getString("nickname"), licenseInfo.getString("plan"));
     }
 
-    private JSONObject getLicenseInfo() throws InvalidKeyException, JSONException, MalformedURLException {
-        return getJsonObjectFromURL("account/license.json");
-    }
-
-    private JSONObject getAllDiagrams() throws InvalidKeyException, JSONException, MalformedURLException {
-        return getJsonObjectFromURL("diagrams.json");
-    }
-
-    public AccountInfo downloadAccountInfo() throws JSONException, InvalidKeyException, MalformedURLException {
-        AccountInfo accountInfo = new AccountInfo(this.getAccountInfo(), this.getLicenseInfo());
-        accountInfo.accountImage = downloadImage(accountInfo.accountInfo.getString("imageUrl"));
-        return accountInfo;
-    }
-
-    public Diagram[] downloadDiagrams() throws JSONException, MalformedURLException, InvalidKeyException {
-        JSONArray allDiagramsRaw = getAllDiagrams().getJSONArray("result");
+    public Diagram[] retrieveDiagrams() throws JSONException, IOException, InvalidKeyException {
+        JSONArray allDiagramsRaw = retrieveJSONFromCacoo("diagrams.json").getJSONArray("result");
         Diagram[] diagrams = new Diagram[allDiagramsRaw.length()];
         for (int i = 0; i < allDiagramsRaw.length(); i++) {
-            diagrams[i] = new Diagram(downloadImage(allDiagramsRaw.getJSONObject(i).getString("imageUrlForApi") + "?apiKey=" + this.apiKey));
+            diagrams[i] = new Diagram(downloadAsImage(new URL(allDiagramsRaw.getJSONObject(i).getString("imageUrlForApi") + "?apiKey=" + this.apiKey)));
         }
         return diagrams;
     }
 
     @NonNull
-    private JSONObject getJsonObjectFromURL(String licenseInfoURL) throws MalformedURLException, JSONException, InvalidKeyException {
+    private JSONObject retrieveJSONFromCacoo(String uri) throws MalformedURLException, JSONException, InvalidKeyException {
         try {
-            URL url = new URL(API_BASE_URL + licenseInfoURL + "?apiKey=" + this.apiKey);
-            return new JSONObject(readAsString(url));
+            URL url = new URL(API_BASE_URL + uri + "?apiKey=" + this.apiKey);
+            return new JSONObject(downloadAsString(url));
         } catch (MalformedURLException e) {
             Log.e("ERROR", e.getMessage(), e);
             throw e;
@@ -75,8 +65,21 @@ public class CacooManager {
         }
     }
 
+    // region Basic utility functions
+
     @NonNull
-    private String readAsString(URL url) throws IOException {
+    private Bitmap downloadAsImage(URL url) throws IOException {
+        Log.d("DEBUG", "Downloading as image: " + url);
+        Bitmap image = null;
+        InputStream in = url.openStream();
+        image = BitmapFactory.decodeStream(in);
+        in.close();
+        return image;
+    }
+
+    @NonNull
+    private String downloadAsString(URL url) throws IOException {
+        Log.d("DEBUG", "Downloading as image: " + url);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -91,18 +94,5 @@ public class CacooManager {
             urlConnection.disconnect();
         }
     }
-
-    private Bitmap downloadImage(String url) {
-        Log.d("DEBUG", "Downloading image: " + url);
-        Bitmap image = null;
-        try {
-            InputStream in = new java.net.URL(url).openStream();
-            image = BitmapFactory.decodeStream(in);
-            in.close();
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-        }
-        return image;
-    }
+    // endregion
 }

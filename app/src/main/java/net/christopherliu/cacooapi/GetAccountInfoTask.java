@@ -23,7 +23,7 @@ public class GetAccountInfoTask extends AsyncTask<String, Void, AsyncTaskResult<
     protected AsyncTaskResult<AccountInfo> doInBackground(String... params) {
         CacooManager x = new CacooManager(params[0]);
         try {
-            AccountInfo accountInfo = x.downloadAccountInfo();
+            AccountInfo accountInfo = x.retrieveAccountInfo();
             return new AsyncTaskResult<AccountInfo>(accountInfo);
         } catch (Exception e) {
             Log.e("ERROR", e.getMessage(), e);

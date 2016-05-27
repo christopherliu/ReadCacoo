@@ -23,7 +23,7 @@ public class GetDiagramsTask extends AsyncTask<String, Void, AsyncTaskResult<Dia
     protected AsyncTaskResult<Diagram[]> doInBackground(String... params) {
         CacooManager x = new CacooManager(params[0]);
         try {
-            Diagram[] diagrams = x.downloadDiagrams();
+            Diagram[] diagrams = x.retrieveDiagrams();
             return new AsyncTaskResult(diagrams);
         } catch (Exception e) {
             Log.e("ERROR", e.getMessage(), e);
