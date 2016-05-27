@@ -1,4 +1,4 @@
-package net.christopherliu.cacooapi;
+package net.christopherliu.cacooapi.async;
 
 import net.christopherliu.cacooapi.types.Diagram;
 import net.christopherliu.system.AsyncTaskResult;

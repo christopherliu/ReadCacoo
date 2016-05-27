@@ -1,8 +1,9 @@
-package net.christopherliu.cacooapi;
+package net.christopherliu.cacooapi.async;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
+import net.christopherliu.cacooapi.CacooManager;
 import net.christopherliu.cacooapi.types.Diagram;
 import net.christopherliu.system.AsyncTaskResult;
 

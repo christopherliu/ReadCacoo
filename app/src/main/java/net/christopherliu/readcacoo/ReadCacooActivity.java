@@ -8,10 +8,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -28,17 +27,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.christopherliu.cacooapi.DiagramsListener;
-import net.christopherliu.cacooapi.GetAccountInfoTask;
-import net.christopherliu.cacooapi.GetDiagramsTask;
-import net.christopherliu.cacooapi.InvalidKeyException;
-import net.christopherliu.cacooapi.types.AccountInfo;
-import net.christopherliu.cacooapi.AccountInfoListener;
-import net.christopherliu.cacooapi.types.Diagram;
-import net.christopherliu.system.AsyncTaskResult;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import net.christopherliu.cacooapi.InvalidKeyException;
+import net.christopherliu.cacooapi.async.AccountInfoListener;
+import net.christopherliu.cacooapi.async.DiagramsListener;
+import net.christopherliu.cacooapi.async.GetAccountInfoTask;
+import net.christopherliu.cacooapi.async.GetDiagramsTask;
+import net.christopherliu.cacooapi.types.AccountInfo;
+import net.christopherliu.cacooapi.types.Diagram;
+import net.christopherliu.system.AsyncTaskResult;
 
 public class ReadCacooActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -58,7 +58,7 @@ public class ReadCacooActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         // Action button
-        // TODO use for "New Diagram" functionality
+        // TODO use for future "New Diagram" functionality
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -120,7 +120,6 @@ public class ReadCacooActivity extends AppCompatActivity
                 accountNickname.setText(accountInfo.nickname);
                 accountStatus.setText(accountInfo.getFriendlyPlanText());
                 accountIcon.setImageBitmap(accountInfo.accountImage);
-                Log.i("INFO", String.valueOf(accountInfo));
             }
         }).execute(apiKey);
 
@@ -174,7 +173,6 @@ public class ReadCacooActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -202,14 +200,14 @@ public class ReadCacooActivity extends AppCompatActivity
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "ReadCacoo Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
+                Action.TYPE_VIEW,
+                "My Cacoo Diagrams",
+                // If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
+                null,
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://net.christopherliu.readcacoo/http/host/path")
+                Uri.parse("android-app://net.christopherliu.readcacoo/http/cacoo.com")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
     }
